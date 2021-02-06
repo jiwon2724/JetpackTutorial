@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.jetpacktutorial.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -18,8 +19,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 // 라이브데이터로 감싸져 있어서 뷰모델이 가지고 있는 이름이 변경이 되었을 때 액티비티나 프래그먼트는 변경사항을 알 수 있음
 // -> 옵저버(라이브 데이터)
 
+// 뷰 바인딩을 설정하면 바인딩 클래스를 자동으로 만들어줌
+// 액티비티 기준으로 이름을 반전시켜서 만들어줌 -> 액티비티 메인 바인딩(바인딩 클래스)
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var myNumberViewModel: MyNumberViewModel
+
+    // 자동으로 완성된 액티비티 메인 바인딩 클래스 인스턴스를 가져옴
+    // 뷰 바인딩을 사용하게되면 xml id형식이 camelCase로 바뀌게 된당
+    val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
     companion object {
         const val TAG = "로그"
@@ -27,7 +34,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        // 뷰 바인딩과 연결
+        setContentView(activityMainBinding.root)
+
 
         // 뷰모델 프로바이더를 통하여 뷰모델을 가지고 올 수 있음
         // get(클래스이름)으로 가지고온다
@@ -35,19 +45,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         myNumberViewModel.currentValue.observe(this, Observer {
             // Observer를 통해서 값이 변경이되면 바로 알 수 있음
             Log.d(TAG, "MainActivity - myNumberViewModel - currentValue 라이브 데이터 값 변경 : $it")
-            number_textview.text = it.toString()
+            activityMainBinding.numberTextview.text = it.toString()
         })
-        plus_btn.setOnClickListener(this)
-        minus_btn.setOnClickListener(this)
+        activityMainBinding.plusBtn.setOnClickListener(this)
+        activityMainBinding.minusBtn.setOnClickListener(this)
      }
 
     override fun onClick(view: View?) {
         Log.d(TAG, "클릭이벤트")
-        val userinput = user_input_edittext.text.toString().toInt()
+        val userinput = activityMainBinding.userInputEdittext.text.toString().toInt()
         // 뷰모델에 라이브데이터 값을 변경하는 메소드 실행
         when(view){
-            plus_btn -> myNumberViewModel.updateValue(ActionType.PLUS, userinput)
-            minus_btn -> myNumberViewModel.updateValue(ActionType.MINUS, userinput)
+            activityMainBinding.plusBtn -> myNumberViewModel.updateValue(ActionType.PLUS, userinput)
+            activityMainBinding.minusBtn -> myNumberViewModel.updateValue(ActionType.MINUS, userinput)
         }
     }
 }
